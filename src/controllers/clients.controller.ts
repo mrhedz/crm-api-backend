@@ -18,17 +18,58 @@ const idSchema = z.object({
   id: z.coerce.number().int().positive(),
 });
 
+const getClientsQuerySchema = z.object({
+  search: z.string().trim().min(1).optional(),
+  status: z.enum(["Nuevo", "Contactado", "Cerrado"]).optional(),
+});
+
 export const getClients = async (
-  _req: Request,
+  req: Request,
   res: Response
 ): Promise<void> => {
   try {
-    const result = await pool.query(
-      "SELECT * FROM clients ORDER BY id DESC"
-    );
+    const parsedQuery = getClientsQuerySchema.safeParse(req.query);
+
+    if (!parsedQuery.success) {
+      res.status(400).json({
+        message: "Invalid query parameters",
+        errors: parsedQuery.error.flatten(),
+      });
+      return;
+    }
+
+    const { search, status } = parsedQuery.data;
+
+    let query = "SELECT * FROM clients";
+    const conditions: string[] = [];
+    const values: Array<string> = [];
+
+    if (search) {
+      values.push(`%${search}%`);
+      const index = values.length;
+      conditions.push(`(name ILIKE $${index} OR email ILIKE $${index})`);
+    }
+
+    if (status) {
+      values.push(status);
+      const index = values.length;
+      conditions.push(`status = $${index}`);
+    }
+
+    if (conditions.length > 0) {
+      query += ` WHERE ${conditions.join(" AND ")}`;
+    }
+
+    query += " ORDER BY id DESC";
+
+    const result = await pool.query(query, values);
 
     res.status(200).json({
       message: "Clients fetched successfully",
+      filters: {
+        search: search ?? null,
+        status: status ?? null,
+      },
       data: result.rows,
     });
   } catch (error) {
@@ -109,7 +150,7 @@ export const createClient = async (
       data: result.rows[0],
     });
   } catch (error: unknown) {
-    const pgError = error as { code?: string; detail?: string; message?: string };
+    const pgError = error as { code?: string; detail?: string };
 
     if (pgError.code === "23505") {
       res.status(409).json({
@@ -174,7 +215,7 @@ export const updateClient = async (
       data: result.rows[0],
     });
   } catch (error: unknown) {
-    const pgError = error as { code?: string; detail?: string; message?: string };
+    const pgError = error as { code?: string; detail?: string };
 
     if (pgError.code === "23505") {
       res.status(409).json({
