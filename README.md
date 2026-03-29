@@ -1,45 +1,45 @@
-# CRM API Backend (Node.js + TypeScript)
+# Chatbot IA para Ventas - API Backend (Node.js + TypeScript)
 
-Backend REST API desarrollado con Node.js, TypeScript y PostgreSQL, enfocado en gestión de clientes (CRM básico) con autenticación JWT y arquitectura escalable.
+Backend API desarrollado con Node.js y TypeScript, enfocado en asistentes conversacionales con inteligencia artificial para recomendaciones de productos y automatización de ventas.
 
 ---
 
 ## Descripción
 
-API backend tipo CRM lista para producción, diseñada con buenas prácticas de arquitectura, validación de datos y manejo de errores. Puede integrarse fácilmente con dashboards, sistemas SaaS, aplicaciones móviles o servicios externos.
+API backend diseñada para generar respuestas inteligentes en lenguaje natural a partir de mensajes del usuario, simulando un asistente de ventas.
+
+Permite integrarse fácilmente con aplicaciones web, e-commerce, dashboards o plataformas SaaS para mejorar la experiencia de usuario mediante interacción conversacional.
 
 ---
 
 ## Features
 
-- Autenticación con JWT
-- CRUD completo de clientes
-- Validación robusta con Zod
-- Manejo estructurado de errores
-- Base de datos PostgreSQL
-- Contenerización con Docker
-- Arquitectura modular (controllers, services, routes)
-- Health checks para API y base de datos
+- Respuestas generadas con inteligencia artificial  
+- Recomendaciones dinámicas de productos  
+- Sugerencias rápidas para mejorar la UX  
+- Endpoint de chat listo para integración  
+- Manejo estructurado de respuestas  
+- Arquitectura modular escalable  
+- Health check para monitoreo  
 
 ---
 
 ## Tecnologías
 
-- Node.js
-- TypeScript
-- Express
-- PostgreSQL
-- Docker
-- Zod
-- JSON Web Tokens (JWT)
+- Node.js  
+- TypeScript  
+- Express  
+- OpenAI API  
+- dotenv  
+- cors  
 
 ---
 
 ## Instalación
 
 ~~~bash
-git clone https://github.com/mrhedz/-crm-api-backend.git
-cd api-backend
+git clone https://github.com/mrhedz/chatbot-ai-sales-api.git
+cd chatbot-ai-sales-api
 npm install
 ~~~
 
@@ -50,17 +50,8 @@ npm install
 Crear archivo `.env` en la raíz del proyecto:
 
 ~~~env
+OPENAI_API_KEY=openai_api_key
 PORT=3000
-DATABASE_URL=postgresql://postgres:postgres@localhost:5432/portfolio_crm
-JWT_SECRET=supersecret
-~~~
-
----
-
-## Ejecutar con Docker
-
-~~~bash
-docker compose up -d
 ~~~
 
 ---
@@ -73,54 +64,49 @@ npm run dev
 
 ---
 
-## Autenticación
-
-POST /api/auth/login
-
-~~~json
-{
-  "email": "admin@test.com",
-  "password": "123456"
-}
-~~~
-
----
-
 ## Endpoints
 
 Health
 
 - GET /health
-- GET /health/db
 
-Clients
+Chat
 
-- GET /api/clients
-- GET /api/clients/:id
-- POST /api/clients
-- PUT /api/clients/:id
-- DELETE /api/clients/:id
+- POST /api/chat
 
 ---
 
-## Seguridad
+## Ejemplo de uso
 
-- Autenticación basada en JWT
-- Rutas protegidas mediante middleware
-- Validación estricta de inputs
-- Manejo de errores controlado
+POST /api/chat
+
+~~~json
+{
+  "message": "Quiero una bebida refrescante"
+}
+~~~
+
+Respuesta:
+
+~~~json
+{
+  "success": true,
+  "botReply": "Te recomiendo una bebida fría con notas cítricas.",
+  "suggestedReplies": [
+    "Quiero algo sin azúcar",
+    "Muéstrame opciones refrescantes"
+  ]
+}
+~~~
 
 ---
 
-## Testing
+## Casos de uso
 
-El proyecto incluye pruebas manuales mediante Insomnia o Postman.
-
-Se recomienda:
-
-- Probar endpoints con y sin token
-- Validar errores (400, 401, 404, 409)
-- Verificar integridad de datos en base de datos
+- Chatbots para e-commerce  
+- Asistentes de ventas con IA  
+- Automatización de atención al cliente  
+- Interfaces conversacionales en productos SaaS  
 
 ---
 
@@ -130,17 +116,16 @@ src/
   controllers/
   routes/
   services/
-  middlewares/
-  utils/
   config/
+  types/
 
 ---
 
 ## Notas
 
-- Todas las rutas (excepto login) requieren autenticación JWT
-- El sistema está preparado para escalar a nuevas entidades
-- La arquitectura permite fácil integración con frontend o microservicios
+- Requiere una API Key válida de OpenAI  
+- Diseñado para integrarse fácilmente con frontend conversacional  
+- Puede escalarse para múltiples flujos de negocio  
 
 ---
 
